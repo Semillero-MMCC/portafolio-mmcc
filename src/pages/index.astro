@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Footer from "../components/Footer.astro";
+import StudentCard from "../components/StudentCard.astro";
+import { students } from "../data/students";
+
+const title = "Semillero MMCC";
+const description = "Semillero de Investigación MMCC - Portafolios de estudiantes";
+---
+
+<BaseLayout title={title} description={description}>
+  <header class="border-b border-(--border-color)">
+    <nav class="max-w-7xl mx-auto px-6 h-16 flex items-center">
+      <span class="font-semibold text-lg text-(--text-primary)">
+        semillero<span class="opacity-70 text-(--accent-green)">.mmcc</span>
+      </span>
+    </nav>
+  </header>
+
+  <main>
+    <section class="border-b border-(--border-color)">
+      <div class="max-w-7xl mx-auto px-6 py-16 md:py-24 text-center space-y-6">
+        <h1 class="text-3xl md:text-5xl font-bold">
+          Bienvenido al Semillero <span class="text-(--accent-cyan)">MMCC</span>
+        </h1>
+        <p class="text-lg text-(--text-secondary) max-w-2xl mx-auto">
+          Conoce a los estudiantes que forman parte de nuestro semillero de investigación.
+          Explora sus portafolios, proyectos y habilidades.
+        </p>
+      </div>
+    </section>
+
+    <section class="py-16 md:py-24">
+      <div class="max-w-7xl mx-auto px-6">
+        <header class="mb-12 text-center">
+          <h2>Nuestros Estudiantes</h2>
+        </header>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {students.map((student) => <StudentCard student={student} />)}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

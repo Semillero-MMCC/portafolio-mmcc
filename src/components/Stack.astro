@@ -1,0 +1,24 @@
+---
+import { getCollection } from "astro:content";
+import StackCard from "./StackCard.astro";
+
+const stack = await getCollection("stack");
+---
+
+<section id="stack" class="border-b border-(--border-color)">
+  <div class="max-w-7xl mx-auto px-6 py-16 md:py-24">
+    <header class="mb-12 text-center">
+      <h2>Stack Tecnológico</h2>
+      <p class="mt-4 text-(--text-secondary)">
+        Tecnologías y herramientas que domino
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Desarrollo de Software -->
+      {stack.map((category) => (
+        <StackCard category={category} />
+      ))}
+    </div>
+  </div>
+</section>

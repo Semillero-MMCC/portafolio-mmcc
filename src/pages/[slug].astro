@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import About from "../components/About.astro";
+import Projects from "../components/Projects.astro";
+import Certifications from "../components/Certifications.astro";
+import Contact from "../components/Contact.astro";
+import Footer from "../components/Footer.astro";
+import Stack from "../components/Stack.astro";
+import { students } from "../data/students";
+import type { GetStaticPaths } from "astro";
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return students.map((s) => ({
+    params: { slug: s.slug },
+    props: { student: s },
+  }));
+};
+
+const { student } = Astro.props;
+---
+
+<BaseLayout title={`Portfolio - ${student.name}`} description={student.description}>
+  <Header logoName={student.logoName} logoSuffix={student.logoSuffix} cvFile={student.cvFile} />
+  <main>
+    <Hero role={student.role} description={student.description} />
+    <About bio={student.bio} aboutImgAlt={student.aboutImgAlt} yearsExperience={student.yearsExperience} projectsCompleted={student.projectsCompleted} />
+    <Projects github={student.github} />
+    <Stack />
+    <Certifications />
+    <Contact email={student.email} github={student.github} linkedin={student.linkedin} />
+  </main>
+  <Footer logoName={student.logoName} logoSuffix={student.logoSuffix} />
+</BaseLayout>

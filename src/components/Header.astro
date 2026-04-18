@@ -1,0 +1,109 @@
+---
+import MobileNavigation from "./MobileNavigation.astro";
+import Navigation from "./Navigation.astro";
+
+const {
+  logoName = "portfolio",
+  logoSuffix = ".dev",
+  cvFile,
+} = Astro.props;
+---
+
+<header class="sticky top-0 z-50 bg-(--bg-primary) border-b border-(--border-color)">
+  <nav
+    aria-label="Navegación principal"
+    class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between"
+  >
+    <a href="#" class="font-semibold text-lg text-(--text-primary)">
+      {logoName}<span class="opacity-70 text-(--accent-green)">{logoSuffix}</span>
+    </a>
+    <button
+      id="menu-toggle"
+      class="md:hidden"
+      aria-label="Abrir menú"
+      aria-expanded="false"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2"
+        ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+          d="M4 6l16 0"></path><path d="M4 12l16 0"></path><path d="M4 18l16 0"
+        ></path></svg
+      ></button
+    >
+
+    <Navigation />
+
+    {cvFile && (
+      <a
+        aria-label="Abrir CV en formato PDF"
+        class="hidden md:flex gap-2 items-center bg-(--accent-green) text-(--bg-primary) rounded-md px-4 py-1.5 text-sm font-medium hover:bg-(--accent-cyan) transition-colors"
+        href={cvFile}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+          ></path>
+        </svg>
+        <span>CV</span>
+      </a>
+    )}
+  </nav>
+  <div
+    id="mobile-overlay"
+    class="hidden md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm -z-10"
+  >
+  </div>
+
+  <MobileNavigation cvFile={cvFile} />
+</header>
+
+<script is:inline>
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const mobileOverlay = document.getElementById("mobile-overlay");
+  const menuLinks = document.querySelectorAll(".menu-toggle");
+  menuLinks.forEach((link) => {
+    link.addEventListener("click", toggleMenu);
+  });
+  menuToggle?.addEventListener("click", toggleMenu);
+
+  function toggleMenu() {
+    const isExpanded = menuToggle.getAttribute("aria-expanded") === "true";
+    menuToggle.setAttribute("aria-expanded", (!isExpanded).toString());
+    menuToggle.setAttribute("aria-label", isExpanded ? "Cerrar menú" : "Abrir menú");
+    if (isExpanded) {
+      mobileMenu?.classList.remove("grid-rows-[1fr]");
+      mobileMenu?.classList.add("grid-rows-[0fr]");
+      mobileOverlay?.classList.add("hidden");
+      document.body.style.overflow = "";
+    } else {
+      mobileMenu?.classList.remove("grid-rows-[0fr]");
+      mobileMenu?.classList.add("grid-rows-[1fr]");
+      mobileOverlay?.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+  }
+  mobileOverlay?.addEventListener("click", toggleMenu);
+</script>

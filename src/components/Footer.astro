@@ -1,0 +1,20 @@
+---
+const { logoName = "portfolio", logoSuffix = ".dev" } = Astro.props;
+---
+
+<footer>
+  <div class="max-w-7xl mx-auto px-6 py-8">
+    <div class="flex flex-col items-center gap-2 text-center">
+      <p class="text-sm text-(--text-secondary)">
+        © <time id="current-year"></time> {logoName}<span class="text-(--accent-green)">{logoSuffix}</span> - Todos los derechos reservados
+      </p>
+      <p class="text-xs text-(--text-secondary)">
+        Desarrollado con <span class="text-(--accent-cyan)">Astro</span> y <span class="text-(--accent-cyan)">Tailwind CSS</span>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('current-year')!.textContent = new Date().getFullYear().toString();
+</script>
