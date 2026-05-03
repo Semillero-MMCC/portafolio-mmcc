@@ -1,0 +1,260 @@
+---
+const data = {
+  ciudad: "Medellin",
+  total: { poblacion: 2256232, caps_teoricos: 90, caps_reales: 50 },
+  comunas: [
+    { comuna: 1, nombre: "Popular", poblacion: 138747, caps_teoricos: 6, caps_reales: 3, lat: 6.2900, lng: -75.5450 },
+    { comuna: 2, nombre: "Santa Cruz", poblacion: 115405, caps_teoricos: 5, caps_reales: 3, lat: 6.2830, lng: -75.5580 },
+    { comuna: 3, nombre: "Manrique", poblacion: 169408, caps_teoricos: 7, caps_reales: 5, lat: 6.2750, lng: -75.5380 },
+    { comuna: 4, nombre: "Aranjuez", poblacion: 147921, caps_teoricos: 6, caps_reales: 4, lat: 6.2720, lng: -75.5530 },
+    { comuna: 5, nombre: "Castilla", poblacion: 131216, caps_teoricos: 5, caps_reales: 4, lat: 6.2750, lng: -75.5750 },
+    { comuna: 6, nombre: "Doce de Octubre", poblacion: 185166, caps_teoricos: 7, caps_reales: 2, lat: 6.2830, lng: -75.5850 },
+    { comuna: 7, nombre: "Robledo", poblacion: 194610, caps_teoricos: 8, caps_reales: 5, lat: 6.2650, lng: -75.5900 },
+    { comuna: 8, nombre: "Villa Hermosa", poblacion: 156853, caps_teoricos: 6, caps_reales: 2, lat: 6.2550, lng: -75.5400 },
+    { comuna: 9, nombre: "Buenos Aires", poblacion: 162179, caps_teoricos: 6, caps_reales: 2, lat: 6.2430, lng: -75.5500 },
+    { comuna: 10, nombre: "La Candelaria", poblacion: 81488, caps_teoricos: 3, caps_reales: 3, lat: 6.2510, lng: -75.5630 },
+    { comuna: 11, nombre: "Laureles - Estadio", poblacion: 112357, caps_teoricos: 4, caps_reales: 1, lat: 6.2480, lng: -75.5800 },
+    { comuna: 12, nombre: "La America", poblacion: 93425, caps_teoricos: 4, caps_reales: 2, lat: 6.2520, lng: -75.5950 },
+    { comuna: 13, nombre: "San Javier", poblacion: 162656, caps_teoricos: 7, caps_reales: 7, lat: 6.2450, lng: -75.6100 },
+    { comuna: 14, nombre: "El Poblado", poblacion: 118381, caps_teoricos: 5, caps_reales: 2, lat: 6.2100, lng: -75.5650 },
+    { comuna: 15, nombre: "Guayabal", poblacion: 69472, caps_teoricos: 3, caps_reales: 3, lat: 6.2200, lng: -75.5800 },
+    { comuna: 16, nombre: "Belen", poblacion: 216948, caps_teoricos: 9, caps_reales: 2, lat: 6.2330, lng: -75.5950 },
+  ],
+};
+---
+
+<section class="py-16 md:py-24 border-b border-(--border-color)">
+  <div class="max-w-7xl mx-auto px-6">
+    <header class="mb-12 text-center">
+      <h2>Modelamiento Matemático <span class="text-(--accent-cyan)">Aplicado</span></h2>
+      <p class="text-(--text-secondary) max-w-2xl mx-auto">
+        Distribución de CAPs (Centros de Atención Primaria) en Medellín: análisis comparativo entre la cobertura teórica óptima y la cobertura real por comuna.
+      </p>
+    </header>
+
+    <!-- KPIs globales -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-(--bg-secondary) border border-(--border-color) rounded-lg p-4 text-center">
+        <p class="text-xs uppercase tracking-wider text-(--text-secondary) mb-1">Población</p>
+        <p class="text-2xl font-bold text-(--text-primary)">{data.total.poblacion.toLocaleString()}</p>
+      </div>
+      <div class="bg-(--bg-secondary) border border-(--border-color) rounded-lg p-4 text-center">
+        <p class="text-xs uppercase tracking-wider text-(--text-secondary) mb-1">CAPs Teóricos</p>
+        <p class="text-2xl font-bold text-(--accent-cyan)">{data.total.caps_teoricos}</p>
+      </div>
+      <div class="bg-(--bg-secondary) border border-(--border-color) rounded-lg p-4 text-center">
+        <p class="text-xs uppercase tracking-wider text-(--text-secondary) mb-1">CAPs Reales</p>
+        <p class="text-2xl font-bold text-(--accent-green)">{data.total.caps_reales}</p>
+      </div>
+      <div class="bg-(--bg-secondary) border border-(--border-color) rounded-lg p-4 text-center">
+        <p class="text-xs uppercase tracking-wider text-(--text-secondary) mb-1">Déficit</p>
+        <p class="text-2xl font-bold text-red-400">{data.total.caps_teoricos - data.total.caps_reales}</p>
+      </div>
+    </div>
+
+    <!-- Mapa -->
+    <div id="mapa-medellin" class="w-full h-[500px] md:h-[600px] rounded-lg border border-(--border-color) z-0"></div>
+
+    <!-- Leyenda -->
+    <div class="flex flex-wrap gap-6 mt-4 justify-center text-sm text-(--text-secondary)">
+      <span class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span> Cobertura completa
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-yellow-500 inline-block"></span> Déficit moderado
+      </span>
+      <span class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> Déficit crítico (≥50%)
+      </span>
+    </div>
+
+    <!-- Gráfica de barras -->
+    <div class="mt-12 bg-(--bg-secondary) border border-(--border-color) rounded-lg p-6">
+      <h3 class="text-center text-lg font-semibold text-(--text-primary) mb-6">
+        CAPs Teóricos vs Reales <span class="text-(--accent-cyan)">por Comuna</span>
+      </h3>
+      <div class="overflow-x-auto">
+        <div class="flex gap-2 min-w-[700px] pt-5" style="height:280px">
+          {data.comunas.map((c) => {
+            const max = 9;
+            const hT = (c.caps_teoricos / max) * 100;
+            const hR = (c.caps_reales / max) * 100;
+            return (
+              <div class="flex-1 flex flex-col items-center">
+                <div class="flex gap-px items-end w-full justify-center flex-1 overflow-visible">
+                  <div class="w-[38%] rounded-t bg-cyan-500/60 relative" style={`height:${hT}%`}>
+                    <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-(--accent-cyan)">{c.caps_teoricos}</span>
+                  </div>
+                  <div class="w-[38%] rounded-t bg-green-500/60 relative" style={`height:${hR}%`}>
+                    <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[10px] font-bold text-(--accent-green)">{c.caps_reales}</span>
+                  </div>
+                </div>
+                <span class="text-[9px] text-(--text-secondary) mt-1" style="writing-mode:vertical-rl;transform:rotate(180deg);height:60px">{c.nombre}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div class="flex justify-center gap-6 mt-4 text-sm text-(--text-secondary)">
+        <span class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-sm bg-cyan-500/60 inline-block"></span> Teóricos
+        </span>
+        <span class="flex items-center gap-2">
+          <span class="w-3 h-3 rounded-sm bg-green-500/60 inline-block"></span> Reales
+        </span>
+      </div>
+    </div>
+
+    <!-- Gráfico de torta -->
+    {(() => {
+      const total = data.comunas.reduce((s, c) => s + c.caps_reales, 0);
+      const segments: { nombre: string; pct: number; color: string }[] = [];
+      const colors = ['#06b6d4','#22c55e','#eab308','#ef4444','#8b5cf6','#ec4899','#f97316','#14b8a6','#6366f1','#a855f7','#f43f5e','#84cc16','#0ea5e9','#d946ef','#fb923c','#10b981'];
+      data.comunas.forEach((c, i) => {
+        segments.push({ nombre: c.nombre, pct: Math.round((c.caps_reales / total) * 100), color: colors[i % colors.length] });
+      });
+      // Construir conic-gradient
+      let acc = 0;
+      const stops = segments.map(s => {
+        const start = acc;
+        acc += s.pct;
+        return `${s.color} ${start}% ${acc}%`;
+      }).join(', ');
+
+      return (
+        <div class="mt-12 bg-(--bg-secondary) border border-(--border-color) rounded-lg p-6">
+          <h3 class="text-center text-lg font-semibold text-(--text-primary) mb-6">
+            Distribución de CAPs Reales <span class="text-(--accent-cyan)">por Comuna</span>
+          </h3>
+          <div class="flex flex-col md:flex-row items-center gap-8 justify-center">
+            <div class="relative w-56 h-56 rounded-full shrink-0" style={`background: conic-gradient(${stops})`}>
+              <div class="absolute inset-8 rounded-full bg-(--bg-secondary) flex items-center justify-center flex-col">
+                <span class="text-2xl font-bold text-(--text-primary)">{data.total.caps_reales}</span>
+                <span class="text-xs text-(--text-secondary)">CAPs Reales</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+              {segments.map((s, i) => (
+                <span class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-sm shrink-0 inline-block" style={`background:${s.color}`}></span>
+                  <span class="text-(--text-secondary)">{data.comunas[i].nombre}</span>
+                  <span class="font-bold text-(--text-primary) ml-auto">{s.pct}%</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    })()}
+
+    {(() => {
+  
+      // Generar segmentos por comuna para la torta detallada
+      const total = data.comunas.reduce((s, c) => s + c.caps_teoricos, 0);
+      const segments: { nombre: string; pct: number; color: string }[] = [];
+      const colors = ['#06b6d4','#22c55e','#eab308','#ef4444','#8b5cf6','#ec4899','#f97316','#14b8a6','#6366f1','#a855f7','#f43f5e','#84cc16','#0ea5e9','#d946ef','#fb923c','#10b981'];
+      data.comunas.forEach((c, i) => {
+        segments.push({ nombre: c.nombre, pct: Math.round((c.caps_teoricos / total) * 100), color: colors[i % colors.length] });
+      });
+      // Construir conic-gradient
+      let acc = 0;
+      const stops = segments.map(s => {
+        const start = acc;
+        acc += s.pct;
+        return `${s.color} ${start}% ${acc}%`;
+      }).join(', ');
+
+      return (
+        <div class="mt-12 bg-(--bg-secondary) border border-(--border-color) rounded-lg p-6">
+          <h3 class="text-center text-lg font-semibold text-(--text-primary) mb-6">
+            Distribución de CAPs Teoricos <span class="text-(--accent-cyan)">por Comuna</span>
+          </h3>
+          <div class="flex flex-col md:flex-row items-center gap-8 justify-center">
+            <div class="relative w-56 h-56 rounded-full shrink-0" style={`background: conic-gradient(${stops})`}>
+              <div class="absolute inset-8 rounded-full bg-(--bg-secondary) flex items-center justify-center flex-col">
+                <span class="text-2xl font-bold text-(--text-primary)">{data.total.caps_teoricos}</span>
+                <span class="text-xs text-(--text-secondary)">CAPs Teoricos</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
+              {segments.map((s, i) => (
+                <span class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-sm shrink-0 inline-block" style={`background:${s.color}`}></span>
+                  <span class="text-(--text-secondary)">{data.comunas[i].nombre}</span>
+                  <span class="font-bold text-(--text-primary) ml-auto">{s.pct}%</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    })()}
+  </div>
+</section>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script is:inline define:vars={{ comunas: data.comunas }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const map = L.map('mapa-medellin', {
+      center: [6.2518, -75.5636],
+      zoom: 12,
+      scrollWheelZoom: false,
+    });
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      maxZoom: 19,
+    }).addTo(map);
+
+    comunas.forEach(function(c) {
+      const pct = c.caps_teoricos > 0 ? (c.caps_reales / c.caps_teoricos) * 100 : 0;
+      let color;
+      if (pct >= 100) color = '#22c55e';
+      else if (pct >= 50) color = '#eab308';
+      else color = '#ef4444';
+
+      const radius = Math.max(18, Math.sqrt(c.poblacion / 1000) * 5);
+
+      const icon = L.divIcon({
+        className: '',
+        html: '<div style="' +
+          'width:' + radius + 'px;height:' + radius + 'px;' +
+          'border-radius:50%;' +
+          'background:' + color + '22;' +
+          'border:2px solid ' + color + ';' +
+          'display:flex;align-items:center;justify-content:center;' +
+          'color:#fff;font-size:11px;font-weight:700;font-family:monospace;' +
+          'transform:translate(-50%,-50%);' +
+          '">' + c.caps_reales + '/' + c.caps_teoricos + '</div>',
+        iconSize: [0, 0],
+      });
+
+      const marker = L.marker([c.lat, c.lng], { icon: icon }).addTo(map);
+
+      const deficit = c.caps_teoricos - c.caps_reales;
+      const barReal = Math.round(pct);
+      marker.bindPopup(
+        '<div style="font-family:monospace;min-width:200px;color:#222">' +
+          '<strong style="font-size:14px">Comuna ' + c.comuna + ' — ' + c.nombre + '</strong><br>' +
+          '<span style="color:#666">Población: ' + c.poblacion.toLocaleString() + '</span>' +
+          '<div style="margin:8px 0">' +
+            '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:2px">' +
+              '<span>CAPs Reales: <b>' + c.caps_reales + '</b></span>' +
+              '<span>Teóricos: <b>' + c.caps_teoricos + '</b></span>' +
+            '</div>' +
+            '<div style="background:#e5e7eb;border-radius:4px;height:16px;overflow:hidden;position:relative">' +
+              '<div style="background:' + color + ';height:100%;width:' + Math.min(barReal, 100) + '%;border-radius:4px;transition:width .3s"></div>' +
+              '<span style="position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:10px;line-height:16px;font-weight:700;color:#333">' + barReal + '%</span>' +
+            '</div>' +
+          '</div>' +
+          (deficit > 0
+            ? '<span style="color:#ef4444;font-size:12px;font-weight:600">⚠ Déficit: ' + deficit + ' CAPs</span>'
+            : '<span style="color:#22c55e;font-size:12px;font-weight:600">✓ Cobertura completa</span>') +
+        '</div>',
+        { maxWidth: 260 }
+      );
+    });
+  });
+</script>
