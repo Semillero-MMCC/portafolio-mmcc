@@ -1,0 +1,123 @@
+---
+import graphsData from "../data/graphs.json";
+
+const imageMap: Record<string, string> = {
+  Img_2: "/graficas/2. Comparativo de  variacion acomulada de muertes perinatales por periodo presidencial. Colombia 2006 2025.jpeg",
+  Img_3: "/graficas/3. Tasa de mortalidad perinatal, colombia 2006 2025.jpeg",
+  Img_4: "/graficas/4. Tasa de mortalidad prematura por enfermedades cronicas no transmisibles en poblacion entre 30 y hasta 70 años, colombia 2006 2025.jpeg",
+  Img_5: "/graficas/5. Razon de mortalidad materna. colombia 2006 2025.jpeg",
+  Img_6: "/graficas/6. Casos y razon de mortalidad materna. colombia 2022 2026 a SE 14.jpeg",
+  Img_7: "/graficas/7. Comparativo de reduccion acomulada de muertes en menores de 1 año por periodo presidencial. Colombia 2006 2025.jpeg",
+  Img_8: "/graficas/8. Tasa de mortalidad perinatal, colombia 2006 2025. por cada 1000 nacidos vivos mas muertes fetales.jpeg",
+  Img_9: "/graficas/9. Tasa de mortalidad en menores de 1 año, colombia 2022 2025 por cada 1000 nacidos vivos.jpeg",
+  Img_10: "/graficas/10. Comparativo de reduccion acomulada de muertes por desnutricion en menores de 5 años por periodo presidencial. Colombia 2006 2025.jpeg",
+  Img_11: "/graficas/11. Numero de casos y tasa de mortalidad por desnutricion en menores de 5 años. Colombia 2006 2025.jpeg",
+  Img_12: "/graficas/12. Defunciones y tasa de mortalidad por desnutricion aguda en menores de 5 años. Colombia 2022 2026 a SE 14.jpeg",
+  Img_13: "/graficas/13. Tasa de mortalidad en menores de 1 año, colombia 2006 2025 por cada 1000 nacidos vivos.jpeg",
+  Img_14: "/graficas/14. Comparativo de cultivos de coca.jpeg",
+  Img_15: "/graficas/15. Defunciones y tasa de mortalidad por desnutricion aguda en menores de 5 años. Colombia 2022 2025.jpeg",
+};
+
+const entries = Object.entries(graphsData) as [string, any][];
+---
+
+<section id="modelamiento-presidencial" class="py-16 md:py-24 border-b border-(--border-color)">
+  <div class="max-w-7xl mx-auto px-6">
+    <header class="mb-12 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold">
+        Modelamiento Matemático de la <span class="text-(--accent-cyan)">Alocución Presidencial</span>
+      </h2>
+      <p class="text-(--text-secondary) max-w-2xl mx-auto mt-4">
+        Interpolación polinómica aplicada a datos de indicadores de salud pública en Colombia, comparando los métodos de Vandermonde, Lagrange y Newton.
+      </p>
+    </header>
+
+    <div class="space-y-16">
+      {entries.map(([key, item]) => {
+        const imgSrc = imageMap[key];
+        const yMax = Math.max(...item.datos.map((d: any) => d.y));
+        const yMin = Math.min(...item.datos.map((d: any) => d.y));
+        const range = yMax - yMin || 1;
+
+        return (
+          <article class="bg-(--bg-secondary) border border-(--border-color) rounded-lg overflow-hidden">
+            <div class="p-6 border-b border-(--border-color)">
+              <h3 class="text-xl font-semibold text-(--text-primary)">{item.titulo}</h3>
+              <div class="flex flex-wrap gap-4 mt-2 text-sm text-(--text-secondary)">
+                <span>Puntos: <strong class="text-(--text-primary)">{item.info.n_puntos}</strong></span>
+                <span>Grado: <strong class="text-(--text-primary)">{item.info.grado_polinomio}</strong></span>
+                <span>Rango X: <strong class="text-(--text-primary)">{item.info.x_min} – {item.info.x_max}</strong></span>
+              </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-0">
+              {/* Imagen original */}
+              {imgSrc && (
+                <div class="p-4 flex items-center justify-center border-r border-(--border-color)">
+                  <img src={imgSrc} alt={item.titulo} class="rounded max-h-80 w-full object-contain" loading="lazy" />
+                </div>
+              )}
+
+              {/* Gráfica de puntos */}
+              <div class="p-6">
+                <p class="text-sm text-(--text-secondary) mb-3 font-medium">Datos interpolados</p>
+                <div class="relative h-64 border border-(--border-color) rounded bg-(--bg-primary)">
+                  {item.datos.map((d: any) => {
+                    const left = ((d.x - item.info.x_min) / (item.info.x_max - item.info.x_min || 1)) * 100;
+                    const bottom = ((d.y - yMin) / range) * 100;
+                    return (
+                      <div
+                        class="absolute w-2.5 h-2.5 rounded-full bg-(--accent-cyan) border border-cyan-300 -translate-x-1/2 translate-y-1/2 group"
+                        style={`left:${left}%;bottom:${bottom}%`}
+                        title={`(${d.x}, ${d.y})`}
+                      />
+                    );
+                  })}
+                  {/* Ejes labels */}
+                  <span class="absolute bottom-0 left-1 text-[10px] text-(--text-secondary)">{item.info.x_min}</span>
+                  <span class="absolute bottom-0 right-1 text-[10px] text-(--text-secondary)">{item.info.x_max}</span>
+                  <span class="absolute top-1 left-1 text-[10px] text-(--text-secondary)">{yMax.toFixed(0)}</span>
+                  <span class="absolute bottom-4 left-1 text-[10px] text-(--text-secondary)">{yMin.toFixed(0)}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Ecuaciones */}
+            <div class="p-6 border-t border-(--border-color)">
+              <p class="text-sm font-medium text-(--text-secondary) mb-2">Ecuaciones obtenidas</p>
+              <div class="space-y-2 overflow-x-auto">
+                <p class="text-xs font-mono text-(--text-primary)"><span class="text-(--accent-cyan)">Vandermonde:</span> {item.ecuaciones.vandermonde}</p>
+                <p class="text-xs font-mono text-(--text-primary)"><span class="text-(--accent-green)">Lagrange:</span> {item.ecuaciones.lagrange}</p>
+                <p class="text-xs font-mono text-(--text-primary)"><span class="text-purple-400">Newton:</span> {item.ecuaciones.newton}</p>
+              </div>
+            </div>
+
+            {/* Errores y recomendación */}
+            <div class="p-6 border-t border-(--border-color)">
+              <div class="grid grid-cols-3 gap-4 mb-4">
+                <div class="text-center">
+                  <p class="text-xs uppercase text-(--text-secondary)">Error Vandermonde</p>
+                  <p class="font-mono text-sm text-(--text-primary)">{item.error_maximo_nodos.vandermonde.toExponential(2)}</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-xs uppercase text-(--text-secondary)">Error Lagrange</p>
+                  <p class="font-mono text-sm text-(--text-primary)">{item.error_maximo_nodos.lagrange.toExponential(2)}</p>
+                </div>
+                <div class="text-center">
+                  <p class="text-xs uppercase text-(--text-secondary)">Error Newton</p>
+                  <p class="font-mono text-sm text-(--text-primary)">{item.error_maximo_nodos.newton.toExponential(2)}</p>
+                </div>
+              </div>
+              <div class="bg-(--bg-primary) border border-(--border-color) rounded p-4">
+                <p class="text-sm">
+                  <span class="text-(--accent-green) font-semibold">Recomendación: {item.recomendacion.metodo}</span>
+                  <span class="text-(--text-secondary)"> — {item.recomendacion.justificacion}</span>
+                </p>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>

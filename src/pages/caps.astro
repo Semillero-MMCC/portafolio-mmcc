@@ -1,0 +1,20 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import MapaModelamiento from "../components/MapaModelamiento.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<BaseLayout title="Modelamiento CAPs - Medellín" description="Distribución de Centros de Atención Primaria en Medellín">
+  <header class="border-b border-(--border-color)">
+    <nav class="max-w-7xl mx-auto px-6 h-16 flex items-center gap-4">
+      <a href="/" class="font-semibold text-lg text-(--text-primary)">
+        semillero<span class="opacity-70 text-(--accent-green)">.mmcc</span>
+      </a>
+      <a href="/" class="text-sm text-(--text-secondary) hover:text-(--accent-cyan)">← Volver</a>
+    </nav>
+  </header>
+  <main>
+    <MapaModelamiento />
+  </main>
+  <Footer />
+</BaseLayout>
