@@ -8,7 +8,9 @@ import Certifications from "../components/Certifications.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
 import Stack from "../components/Stack.astro";
+import GraphSection from "../components/GraphSection.astro";
 import { students } from "../data/students";
+import graphsBook from "../data/graphs-book.json";
 import type { GetStaticPaths } from "astro";
 
 export const getStaticPaths: GetStaticPaths = () => {
@@ -19,12 +21,16 @@ export const getStaticPaths: GetStaticPaths = () => {
 };
 
 const { student } = Astro.props;
+const graphData = graphsBook.find((g) =>
+  g.nombre.toLowerCase().includes(student.name.toLowerCase().split(" ")[0])
+);
 ---
 
 <BaseLayout title={`Portfolio - ${student.name}`} description={student.description}>
   <Header logoName={student.logoName} logoSuffix={student.logoSuffix} cvFile={student.cvFile} />
   <main>
     <Hero role={student.role} description={student.description} />
+    {graphData && <GraphSection ecuacion={graphData.ecuacion} imagen={graphData.imagen} nombre={graphData.nombre} puntos={graphData.puntos} />}
     <About bio={student.bio} aboutImgAlt={student.aboutImgAlt} yearsExperience={student.yearsExperience} projectsCompleted={student.projectsCompleted} />
     <Projects github={student.github} />
     <Stack />

@@ -1,0 +1,118 @@
+---
+interface Props {
+  ecuacion: string;
+  imagen: string;
+  nombre: string;
+  puntos: { x: number; y: number }[];
+}
+
+const { ecuacion, imagen, nombre, puntos } = Astro.props;
+---
+
+<section id="graph-book" class="border-b border-(--border-color)">
+  <div class="max-w-7xl mx-auto px-6 py-12 md:py-20">
+    <header class="mb-8">
+      <h2>📊 Gráfica del Libro</h2>
+      <p class="text-(--text-secondary) mt-2">Interpolación polinómica asignada a {nombre}</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <div class="space-y-6">
+        <div class="p-6 rounded-xl bg-(--bg-secondary) border border-(--border-color)">
+          <h3 class="text-sm font-semibold text-(--accent-cyan) uppercase tracking-wide mb-3">Ecuación</h3>
+          <p class="text-(--text-primary) font-mono text-sm break-all leading-relaxed">{ecuacion}</p>
+        </div>
+
+        <div class="p-6 rounded-xl bg-(--bg-secondary) border border-(--border-color)">
+          <h3 class="text-sm font-semibold text-(--accent-green) uppercase tracking-wide mb-3">Puntos de Interpolación</h3>
+          <canvas id="graph-canvas" class="w-full h-64 rounded-lg bg-(--bg-primary)" data-puntos={JSON.stringify(puntos)}></canvas>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-(--bg-secondary) border border-(--border-color)">
+        <h3 class="text-sm font-semibold text-(--accent-cyan) uppercase tracking-wide mb-3">Imagen de Referencia</h3>
+        <img
+          src={`/graficas-libro/${imagen}`}
+          alt={`Gráfica de ${nombre}`}
+          class="w-full rounded-lg"
+          loading="lazy"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const canvas = document.getElementById('graph-canvas') as HTMLCanvasElement;
+  if (canvas) {
+    const ctx = canvas.getContext('2d')!;
+    const puntos: { x: number; y: number }[] = JSON.parse(canvas.dataset.puntos || '[]');
+
+    function draw() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      const w = rect.width;
+      const h = rect.height;
+      const pad = 50;
+
+      const xs = puntos.map(p => p.x);
+      const ys = puntos.map(p => p.y);
+      const xMin = Math.min(...xs), xMax = Math.max(...xs);
+      const yMin = Math.min(...ys), yMax = Math.max(...ys);
+      const xRange = xMax - xMin || 1;
+      const yRange = yMax - yMin || 1;
+
+      // Fondo
+      ctx.fillStyle = '#0a0a0a';
+      ctx.fillRect(0, 0, w, h);
+
+      // Ejes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pad, pad);
+      ctx.lineTo(pad, h - pad);
+      ctx.lineTo(w - pad, h - pad);
+      ctx.stroke();
+
+      // Labels
+      ctx.fillStyle = '#888';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(xMin.toFixed(0), pad, h - pad + 15);
+      ctx.fillText(xMax.toFixed(0), w - pad, h - pad + 15);
+      ctx.textAlign = 'right';
+      ctx.fillText(yMax.toFixed(2), pad - 5, pad + 4);
+      ctx.fillText(yMin.toFixed(2), pad - 5, h - pad);
+
+      // Funciones de mapeo
+      const mapX = (x: number) => pad + ((x - xMin) / xRange) * (w - 2 * pad);
+      const mapY = (y: number) => (h - pad) - ((y - yMin) / yRange) * (h - 2 * pad);
+
+      // Líneas uniendo puntos
+      ctx.strokeStyle = '#22d3ee';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      puntos.forEach((p, i) => {
+        const px = mapX(p.x), py = mapY(p.y);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+
+      // Puntos
+      ctx.fillStyle = '#22d3ee';
+      puntos.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(mapX(p.x), mapY(p.y), 5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    draw();
+    window.addEventListener('resize', draw);
+  }
+</script>
